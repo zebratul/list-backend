@@ -7,7 +7,7 @@ const itemRoutes = require('./routes/items');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:3000';
+const CLIENT_ORIGIN = 'https://list-frontend-five.vercel.app/';
 
 app.use(
   cors({
