@@ -2,16 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { ITEMS } = require('../data');
 
-// In-memory session storage helper
-function getUserSession(req) {
-  if (!req.session.userData) {
-    req.session.userData = {
-      selected: [],
-      customOrder: [],
-    };
-  }
-  return req.session.userData;
-}
+let globalSelected = [];
+let globalCustomOrder = [];
 
 // GET /items?q=...&offset=...&limit=...
 router.get('/', (req, res) => {
@@ -23,12 +15,10 @@ router.get('/', (req, res) => {
     ? ITEMS.filter((item) => item.name.toLowerCase().includes(q))
     : [...ITEMS];
 
-  const { customOrder } = getUserSession(req);
-
-  if (customOrder.length > 0 && !q) {
-    const customSet = new Set(customOrder);
+  if (globalCustomOrder.length > 0 && !q) {
+    const customSet = new Set(globalCustomOrder);
     const reordered = [
-      ...customOrder
+      ...globalCustomOrder
         .map((id) => filtered.find((itm) => itm.id === id))
         .filter(Boolean),
       ...filtered.filter((itm) => !customSet.has(itm.id)),
@@ -40,26 +30,25 @@ router.get('/', (req, res) => {
   res.json({ total: filtered.length, items: paginated });
 });
 
-router.get('/selection', (req, res) => {
-  const { selected, customOrder } = getUserSession(req);
-  res.json({ selected, customOrder });
+router.get('/selection', (_req, res) => {
+  res.json({
+    selected: globalSelected,
+    customOrder: globalCustomOrder,
+  });
 });
 
 router.post('/selection', (req, res) => {
   const { selected } = req.body;
-  console.log(`Items selected ${selected}`);
-  const session = getUserSession(req);
-  session.selected = Array.isArray(selected) ? selected : [];
+  globalSelected = Array.isArray(selected) ? selected : [];
+  console.log(`Items selected: ${globalSelected}`);
   res.sendStatus(200);
 });
 
 router.post('/sort', (req, res) => {
   const { sortedIds } = req.body;
-  console.log(`Items sorted ${sortedIds}`);
-  const session = getUserSession(req);
-  session.customOrder = Array.isArray(sortedIds) ? sortedIds : [];
+  globalCustomOrder = Array.isArray(sortedIds) ? sortedIds : [];
+  console.log(`Items sorted: ${globalCustomOrder}`);
   res.sendStatus(200);
 });
 
 module.exports = router;
-

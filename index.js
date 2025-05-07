@@ -1,12 +1,10 @@
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session');
 const cors = require('cors');
 const itemRoutes = require('./routes/items');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://list-frontend-five.vercel.app';
 
 app.use(
@@ -15,19 +13,7 @@ app.use(
     credentials: true,
   })
 );
-
 app.use(express.json());
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 'dev_secret',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    },
-  })
-);
 app.use('/items', itemRoutes);
 
 app.listen(PORT, () => {
