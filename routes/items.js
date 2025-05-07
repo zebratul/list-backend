@@ -47,6 +47,7 @@ router.get('/selection', (req, res) => {
 
 router.post('/selection', (req, res) => {
   const { selected } = req.body;
+  console.log(`Items selected ${selected}`);
   const session = getUserSession(req);
   session.selected = Array.isArray(selected) ? selected : [];
   res.sendStatus(200);
@@ -54,6 +55,7 @@ router.post('/selection', (req, res) => {
 
 router.post('/sort', (req, res) => {
   const { sortedIds } = req.body;
+  console.log(`Items sorted ${sortedIds}`);
   const session = getUserSession(req);
   session.customOrder = Array.isArray(sortedIds) ? sortedIds : [];
   res.sendStatus(200);
