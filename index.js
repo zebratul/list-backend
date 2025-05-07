@@ -7,7 +7,7 @@ const itemRoutes = require('./routes/items');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const CLIENT_ORIGIN = 'https://list-frontend-five.vercel.app/';
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://list-frontend-five.vercel.app';
 
 app.use(
   cors({
@@ -17,7 +17,6 @@ app.use(
 );
 
 app.use(express.json());
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'dev_secret',
@@ -29,7 +28,6 @@ app.use(
     },
   })
 );
-
 app.use('/items', itemRoutes);
 
 app.listen(PORT, () => {
